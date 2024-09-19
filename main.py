@@ -17,3 +17,15 @@ values = list(map(int, input("\nВведите значения для λ01, λ0
 # Это тоже, для лучшего визуального восприятия 
 print(f"{values[0]+values[1]}p0 = {values[2]}p1 + {values[4]}p2,\n{values[2]+values[3]}p1 = {values[0]}p0 + {values[6]}p3,\n{values[4]+values[5]}p2 = {values[1]}p0 + {values[7]}p3,\np0 + p1 + p2 + p3 = 1.\n")
 
+# Определим переменные вероятностей
+p0, p1, p2, p3 = symbols('p0 p1 p2 p3')
+
+eq1 = Eq(3*p0, 2*p1 + 3*p2)  # 3p0 = 2p1 + 3p2
+eq2 = Eq(4*p1, p0 + 3*p3)    # 4p1 = p0 + 3p3
+eq3 = Eq(4*p2, 2*p0 + 2*p3)  # 4p2 = 2p0 + 2p3
+eq4 = Eq(p0 + p1 + p2 + p3, 1)  # нормировочное условие
+
+# Тут решается система уравнений
+solution = solve([eq1, eq2, eq3, eq4], (p0, p1, p2, p3))
+
+print(solution)
