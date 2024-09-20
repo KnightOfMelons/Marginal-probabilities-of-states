@@ -62,12 +62,12 @@ def first_task(values=None, print_text_hepler=False):
 # затрат соответственно в 4 и 2 ден. ед. Оценить экономическую эффективность имеющейся возможности уменьшения вдвое среднего ремонта
 # каждого из двух узлов, если при этом придется вдвое увеличить затраты на ремонт каждого узла (в единицу времени).
 
-def second_task(solution_rounded_values, print_text_hepler=False):
-    first_node_income =  10 # Денежные единицы
-    second_node_income = 6
-
-    first_node_repairing = 4 # Денежные единицы
-    second_node_repairing = 2
+def second_task(solution_rounded_values, print_text_hepler=False, first_node_income = 10, second_node_income = 6, first_node_repairing = 4, second_node_repairing = 2):
+    # Чуть выше в аргументах функции я передал значения по умолчанию для first_node_income, second_node_income, first_node_repairing, second_node_repairing.
+    # Там в лекционных материалах были указаны именно эти числа. Это которые: "Если известно, что в единицу времени исправная
+    # работа первого и второго узлов приносит доход соответственно в 10 (это у меня first_node_income) и 6 (это second_node_income) ден. ед., а их ремонт
+    # требует затрат соответственно в 4 (это first_node_repairing) и 2 (second_node_repairing) ден. ед."
+    # Если нужно, то можно и сделать эти параметры запрашиваемыми от пользователя, но я пока что оставил так. 
     
     # p0 = 0.40, p1 = 0.20, p2 = 0.27, p3 = 0.13.
     first_node = solution_rounded_values[0] + solution_rounded_values[2]
@@ -95,7 +95,7 @@ def second_task(solution_rounded_values, print_text_hepler=False):
 
     if print_text_hepler == True:
         # Это тоже, для лучшего визуального восприятия 
-        print(f"\n{lmbd01 + lmbd02}p0 = {lmbd10}p1 + {lmbd20}p2,\n{lmbd10 + lmbd13}p1 = {lmbd01}p0 + {lmbd31}p3,\n{lmbd20 + lmbd23}p2 = {lmbd02}p0 + {lmbd32}p3,\np0 + p1 + p2 + p3 = 1.\n")
+        print(f"\n{lmbd01 + lmbd02}p0 = {lmbd10}p1 + {lmbd20}p2,\n{lmbd10 + lmbd13}p1 = {lmbd01}p0 + {lmbd31}p3,\n{lmbd20 + lmbd23}p2 = {lmbd02}p0 + {lmbd32}p3,\np0 + p1 + p2 + p3 = 1.")
 
 
     # Тут также, как и в прошлой функции first_task решается
@@ -117,7 +117,20 @@ def second_task(solution_rounded_values, print_text_hepler=False):
     p2 = solution_rounded[p2] # p2 = 0.12
     p3 = solution_rounded[p3] # p3 = 0.05
 
-    return D, p0, p1, p2, p3
+    first_node_2 = p0 + p2
+    second_node_2 = p0 + p1
+    first_node_in_repair_2 = p1 + p3
+    second_node_in_repair_2 = p2 + p3
+
+    first_node_repairing = first_node_repairing * 2 # Затраты на ремонт первого = 8
+    second_node_repairing = second_node_repairing * 2 # Затраты на ремонт второго = 4
+
+    D_1 = (first_node_2 * first_node_income) + (second_node_2 * second_node_income) - (first_node_in_repair_2 * first_node_repairing) - (second_node_in_repair_2 * second_node_repairing)
+
+    if print_text_hepler == True:
+        print(f"\nД1 = {first_node_2} * {first_node_income} + {second_node_2} * {second_node_income} - {first_node_in_repair_2} * {first_node_repairing} - {second_node_in_repair_2} * {second_node_repairing} = {D_1} ден. ед.")
+
+    return D, D_1
 
 
 # Тут начало программы как бы. Значения по умолчанию - 1 2 2 2 3 1 3 2
@@ -133,5 +146,15 @@ else:
 values_for_tasks = first_task(values, print_text_hepler=True)
 
 
-print(f"Решение 1 задания: p0 = {values_for_tasks[0]}, p1 = {values_for_tasks[1]}, p2 = {values_for_tasks[2]}, p3 = {values_for_tasks[3]}.\n") 
-print(f"Решение 2 задания: {second_task(values_for_tasks, print_text_hepler=True)} ден. ед.")
+print(f"==== Решение 1 задания ====\n\np0 = {values_for_tasks[0]}, p1 = {values_for_tasks[1]}, p2 = {values_for_tasks[2]}, p3 = {values_for_tasks[3]}.\n") 
+
+print("==== Решение 2 задания ====\n")
+
+D_values = second_task(values_for_tasks, print_text_hepler=True)
+
+if D_values[1] > D_values[0]:
+    print(f"\nТак как Д1 больше Д примерно на {((D_values[1] - D_values[0])/D_values[0]) * 100} %, то экономическая целесообразность ускорения ремонтов узлов очевидна.\n")
+elif D_values[0] > D_values[1]:
+    print(f"\nТак как Д больше Д1 примерно на {((D_values[0] - D_values[1])/D_values[1]) * 100} %, то экономическая целесообразность ускорения ремонтов узлов НЕ ОЧЕВИДНА.")
+else:
+    print('Д1 и Д равны друг другу, либо что-то пошло не так...')
