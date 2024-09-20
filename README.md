@@ -6,10 +6,6 @@
 
 Необходимо установить перед выполнением программы:
 
-pip install sympy
-
-pip install setuptools
-
-pip install matplotlib
+pip install -r requirements.txt
 
 Матплотлиб нужна для визуализации графиков в конце (требовалось по заданию)
