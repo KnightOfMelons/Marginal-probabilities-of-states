@@ -24,6 +24,16 @@ def first_task(values=None, print_text_hepler=False):
     # Определим переменные вероятностей
     p0, p1, p2, p3 = symbols('p0 p1 p2 p3')
 
+    # На всякий случай записал сюда значения для лямбд (нужно ещё для задания 2)
+    lmbd01 = values[0]
+    lmbd02 = values[1]
+    lmbd10 = values[2]
+    lmbd13 = values[3]
+    lmbd20 = values[4]
+    lmbd23 = values[5]
+    lmbd31 = values[6]
+    lmbd32 = values[7]
+
     eq1 = Eq((values[0]+values[1])*p0, (values[2])*p1 + (values[4])*p2)  # 3p0 = 2p1 + 3p2
     eq2 = Eq((values[2]+values[3])*p1, (values[0])*p0 + (values[6])*p3)    # 4p1 = p0 + 3p3
     eq3 = Eq((values[4]+values[5])*p2, (values[1])*p0 + (values[7])*p3)  # 4p2 = 2p0 + 2p3
@@ -43,7 +53,8 @@ def first_task(values=None, print_text_hepler=False):
     p2 = solution_rounded[p2]
     p3 = solution_rounded[p3]
 
-    return p0, p1, p2, p3
+    # Лямбды нужны для задания 2
+    return p0, p1, p2, p3, lmbd01, lmbd02, lmbd10, lmbd13, lmbd20, lmbd23, lmbd31, lmbd32
 
 # Задание 2.
 # Найти средний чистый доход от эксплуатации в стационарном режиме системы S в условиях предыдущего примера. Если известно, что
@@ -51,8 +62,63 @@ def first_task(values=None, print_text_hepler=False):
 # затрат соответственно в 4 и 2 ден. ед. Оценить экономическую эффективность имеющейся возможности уменьшения вдвое среднего ремонта
 # каждого из двух узлов, если при этом придется вдвое увеличить затраты на ремонт каждого узла (в единицу времени).
 
-def second_task(solution_rounded_values):
-    pass
+def second_task(solution_rounded_values, print_text_hepler=False):
+    first_node_income =  10 # Денежные единицы
+    second_node_income = 6
+
+    first_node_repairing = 4 # Денежные единицы
+    second_node_repairing = 2
+    
+    # p0 = 0.40, p1 = 0.20, p2 = 0.27, p3 = 0.13.
+    first_node = solution_rounded_values[0] + solution_rounded_values[2]
+    second_node = solution_rounded_values[0] + solution_rounded_values[1]
+    first_node_in_repair = solution_rounded_values[1] + solution_rounded_values[3]
+    second_node_in_repair = solution_rounded_values[2] + solution_rounded_values[3]
+
+    # Д = 8.18 ден. ед.
+    D = (first_node * first_node_income) + (second_node * second_node_income) - (first_node_in_repair * first_node_repairing) - (second_node_in_repair * second_node_repairing)
+    
+    if print_text_hepler == True:
+        print(f"Д = {first_node} * {first_node_income} + {second_node} * {second_node_income} - {first_node_in_repair} * {first_node_repairing} - {second_node_in_repair} * {second_node_repairing} = {D} ден. ед.")
+
+    # Интенсивности потоков событий равны (λ10 = 4, λ20 = 6, λ31 = 6, λ32 = 4):
+    lmbd10 = solution_rounded_values[6] * 2
+    lmbd20 = solution_rounded_values[8] * 2
+    lmbd31 = solution_rounded_values[10] * 2
+    lmbd32 = solution_rounded_values[11] * 2
+
+    # Остальные остаются прежними
+    lmbd01 = solution_rounded_values[4]
+    lmbd02 = solution_rounded_values[5]
+    lmbd13 = solution_rounded_values[7]
+    lmbd23 = solution_rounded_values[9]
+
+    if print_text_hepler == True:
+        # Это тоже, для лучшего визуального восприятия 
+        print(f"\n{lmbd01 + lmbd02}p0 = {lmbd10}p1 + {lmbd20}p2,\n{lmbd10 + lmbd13}p1 = {lmbd01}p0 + {lmbd31}p3,\n{lmbd20 + lmbd23}p2 = {lmbd02}p0 + {lmbd32}p3,\np0 + p1 + p2 + p3 = 1.\n")
+
+
+    # Тут также, как и в прошлой функции first_task решается
+    p0, p1, p2, p3 = symbols('p0 p1 p2 p3')
+
+    eq1 = Eq((lmbd01 + lmbd02)*p0, (lmbd10)*p1 + (lmbd20)*p2) # 3p0 = 4p1 + 6p2, 
+    eq2 = Eq((lmbd10 + lmbd13)*p1, (lmbd01)*p0 + (lmbd31)*p3) # 6p1 = p0 + 6p3,   
+    eq3 = Eq((lmbd20 + lmbd23)*p2, (lmbd02)*p0 + (lmbd32)*p3) # 7p2 = 2p0 + 4p3, 
+    eq4 = Eq(p0 + p1 + p2 + p3, 1)  # нормировочное условие
+
+    # Тут решается система уравнений
+    solution = solve([eq1, eq2, eq3, eq4], (p0, p1, p2, p3))
+
+    solution_rounded = {var: round(sol.evalf(), 2) for var, sol in solution.items()}
+
+    # Решив систему, получим вероятность сост.
+    p0 = solution_rounded[p0] # p0 = 0.6
+    p1 = solution_rounded[p1] # p1 = 0.15
+    p2 = solution_rounded[p2] # p2 = 0.12
+    p3 = solution_rounded[p3] # p3 = 0.05
+
+    return D, p0, p1, p2, p3
+
 
 # Тут начало программы как бы. Значения по умолчанию - 1 2 2 2 3 1 3 2
 user_input = input("\nВведите значения для λ01, λ02, λ10, λ13, λ20, λ23, λ31, λ32 через пробел (или нажмите Enter для использования значений по умолчанию): ")
@@ -64,7 +130,8 @@ else:
 
 # Запоминаю все значения из Задания 1 для использования их в Задании 2.
 
-values_for_tasks = first_task(values, True)
+values_for_tasks = first_task(values, print_text_hepler=True)
 
 
-print(f"Решение 1 задания: p0 = {values_for_tasks[0]}, p2 = {values_for_tasks[1]}, p3 = {values_for_tasks[2]}, p3 = {values_for_tasks[3]}.") 
+print(f"Решение 1 задания: p0 = {values_for_tasks[0]}, p1 = {values_for_tasks[1]}, p2 = {values_for_tasks[2]}, p3 = {values_for_tasks[3]}.\n") 
+print(f"Решение 2 задания: {second_task(values_for_tasks, print_text_hepler=True)} ден. ед.")
