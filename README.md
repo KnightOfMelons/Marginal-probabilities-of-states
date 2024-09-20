@@ -9,3 +9,7 @@
 pip install sympy
 
 pip install setuptools
+
+pip install matplotlib
+
+Матплотлиб нужна для визуализации графиков в конце (требовалось по заданию)
