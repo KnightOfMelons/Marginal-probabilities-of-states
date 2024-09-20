@@ -10,18 +10,7 @@
 from sympy import symbols, Eq, solve
 import matplotlib.pyplot as plt
 
-# Эта функция для сравнений значений D и D1 в конце (сделал максимально просто).
-def plot_comparison(D_values):
-    labels = ['D', 'D_1']
-    values = [D_values[0], D_values[1]]
-
-    plt.figure(figsize=(8, 6))
-    plt.bar(labels, values, color=['blue', 'green'])
-    plt.ylabel('Значение')
-    plt.title('Сравнение значений D и D_1')
-    plt.show()
-
-# Сделал вывод услови, которое чуть выше для удобства восприятия пользователю
+# Сделал вывод условий, которое чуть выше для удобства восприятия пользователю
 print("\nСистема уравнений имеет вид: \n\n(λ01 + λ02)p0 = λ10p1 + λ20p2,\n(λ10 + λ13)p1 = λ01p0 + λ31p3,\n(λ20 + λ23)p2 = λ02p0 + λ32p3,\n(λ31 + λ32)p3 = λ13p1 + λ23p2.")
 
 def first_task(values=None, print_text_hepler=False):
@@ -171,6 +160,17 @@ elif D_values[0] > D_values[1]:
     print(f"\nТак как Д больше Д1 примерно на {((D_values[0] - D_values[1])/D_values[1]) * 100} %, то экономическая целесообразность ускорения ремонтов узлов НЕ ОЧЕВИДНА.")
 else:
     print('Д1 и Д равны друг другу, либо что-то пошло не так...')
+
+# Эта функция для сравнений значений D и D1 (сделал максимально просто).
+def plot_comparison(D_values):
+    labels = ['D', 'D_1']
+    values = [D_values[0], D_values[1]]
+
+    plt.figure(figsize=(8, 6))
+    plt.bar(labels, values, color=['blue', 'green'])
+    plt.ylabel('Значение')
+    plt.title('Сравнение значений D и D_1')
+    plt.show()
 
 choose = int(input("\nНужно ли рисовать диаграмму для сравнения?\n1 - Нарисовать\n2 - Нет\nВаш выбор: "))
 if choose == 1:
